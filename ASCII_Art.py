@@ -25,14 +25,50 @@ def serialize_text(text: str):
 
 
 def conversion_table(text: str, table: dict, num: int):
+    if num == 0:
+        return text
     conv_txt = ''
-    for l in text:
-        try:
-            conv_txt += table[l][num]
-        except:
-            conv_txt += 'X'
+    lines = text.splitlines()
+    for line in lines:
+        conv_line = ''
+        for l in line:
+            try:
+                conv_line += table[l][num - 1]
+            except:
+                conv_line += 'X'
+        conv_txt += conv_line + '\n'
+    return conv_txt[:-1]
+
+
+def rotation(text: str, rot):
+    if rot == 180:
+        return rotation(text[::-1], 360)
+    if rot == 270:
+        return rotation(text[::-1], 90)
+    lines = text.splitlines()
+    rot_txt = ''
+    if rot == 360:
+        for line in lines:
+            rot_txt += line[::-1]+'\n'
+        return rot_txt[:-1:]
+    if rot == 90:
+        max_line = len(max(lines, key=lambda l: len(l)))
+        rot_lines = ['']*max_line
+        for line in lines:
+            for i in range(max_line):
+                try:
+                    rot_lines[i]+=line[i]
+                except:
+                    rot_lines[i] += ' '
+        for line in rot_lines:
+            rot_txt += line[::-1] + '\n'
+        return rot_txt[:-1:]
+
 
 
 if __name__ == '__main__':
     f = open("python.txt", 'r')
-    print(serialize_text(f.read()))
+    t = f.read()
+    print(t)
+    print(rotation(t, 360))
+    #print(rotation(rotation(t, 360), 360))

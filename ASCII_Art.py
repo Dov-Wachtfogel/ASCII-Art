@@ -65,10 +65,25 @@ def rotation(text: str, rot):
         return rot_txt[:-1:]
 
 
+def deserialize_line(line: str):
+    for i in range(1, len(line)):
+        if not line[i].isdigit():
+            return line[i]*int(line[:i]) + deserialize_line(line[i+1::])
+    return ''
+
+
+def deserialize(txt: str):
+    lines = txt.splitlines()
+    des_txt = ''
+    for line in lines:
+        des_txt += deserialize_line(line) + '\n'
+    return des_txt[:-1:]
+
 
 if __name__ == '__main__':
-    f = open("python.txt", 'r')
+    f = open("serialized1.txt", 'r')
     t = f.read()
-    print(t)
-    print(rotation(t, 360))
+    print()
+    print(deserialize(t))
+    #print(rotation(t, 360))
     #print(rotation(rotation(t, 360), 360))

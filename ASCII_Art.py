@@ -1,5 +1,9 @@
 import csv
+
+
 def serialize_line(ASCII_art_line: str):
+    if len(ASCII_art_line) == 0:
+        return ''
     ser_line = ''
     last_letter = ASCII_art_line[0]
     counter = 0
@@ -87,10 +91,14 @@ def csv_to_convert_table(csv_path: str):
     dict_table = {}
     for row in csv_reader:
         dict_table[row[0]] = list(row[1:])
+    return dict_table
+
+
 def main():
-    to_serialize = True
+    to_serialize = False
     to_rotate = False
     to_convert = False
+    table = csv_to_convert_table('convertion_table.csv')
     a = input('serialize / deserialize (s / d): ')
     if not a in ['serialize', 'deserialize', 's', 'd']:
         print('unknown action, try again')
@@ -129,31 +137,25 @@ def main():
         if to_rotate:
             txt = rotation(txt, rotation_angle)
         ser_txt = serialize_text(txt)
-        f = open(file_path+'.saa', 'w') #saa = serialized ASCII art
+        f = open(file_path + '.saa', 'w')  # saa = serialized ASCII art
         f.write(ser_txt)
         f.close()
-        print('the file saved as '+ file_path+'.saa')
+        print('the file saved as ' + file_path + '.saa')
     if not to_serialize:
         txt = deserialize(txt)
         if to_convert:
             txt = conversion_table(txt, table, conversion)
         if to_rotate:
             txt = rotation(txt, rotation_angle)
-        des_txt = serialize_text(txt)
         new_path = file_path + '.ASCIIart'
-        if file_path[-4:]=='.saa':
+        if file_path[-4:] == '.saa':
             new_path = file_path[:-4]
 
         f = open(new_path, 'w')  # saa = serialized ASCII art
-        f.write(des_txt)
+        f.write(txt)
         f.close()
-        print('the file saved as ' + new_path + '.saa')
+        print('the file saved as ' + new_path)
 
 
 if __name__ == '__main__':
-    f = open("serialized1.txt", 'r')
-    t = f.read()
-    print()
-    print(deserialize(t))
-    # print(rotation(t, 360))
-    # print(rotation(rotation(t, 360), 360))
+    main()

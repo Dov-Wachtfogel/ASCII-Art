@@ -1,3 +1,4 @@
+import csv
 def serialize_line(ASCII_art_line: str):
     ser_line = ''
     last_letter = ASCII_art_line[0]
@@ -49,15 +50,15 @@ def rotation(text: str, rot):
     rot_txt = ''
     if rot == 360:
         for line in lines:
-            rot_txt += line[::-1]+'\n'
+            rot_txt += line[::-1] + '\n'
         return rot_txt[:-1:]
     if rot == 90:
         max_line = len(max(lines, key=lambda l: len(l)))
-        rot_lines = ['']*max_line
+        rot_lines = [''] * max_line
         for line in lines:
             for i in range(max_line):
                 try:
-                    rot_lines[i]+=line[i]
+                    rot_lines[i] += line[i]
                 except:
                     rot_lines[i] += ' '
         for line in rot_lines:
@@ -68,7 +69,7 @@ def rotation(text: str, rot):
 def deserialize_line(line: str):
     for i in range(1, len(line)):
         if not line[i].isdigit():
-            return line[i]*int(line[:i]) + deserialize_line(line[i+1::])
+            return line[i] * int(line[:i]) + deserialize_line(line[i + 1::])
     return ''
 
 
@@ -80,10 +81,79 @@ def deserialize(txt: str):
     return des_txt[:-1:]
 
 
+def csv_to_convert_table(csv_path: str):
+    csv_file = open(csv_path, 'r')
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    dict_table = {}
+    for row in csv_reader:
+        dict_table[row[0]] = list(row[1:])
+def main():
+    to_serialize = True
+    to_rotate = False
+    to_convert = False
+    a = input('serialize / deserialize (s / d): ')
+    if not a in ['serialize', 'deserialize', 's', 'd']:
+        print('unknown action, try again')
+        main()
+        return None
+    file_path = input("please enter file's path: ")
+    try:
+        f = open(file_path, 'r')
+        txt = f.read()
+        f.close()
+    except:
+        print('file not found, try again')
+        main()
+        return None
+    r = input('rotate image? (True / False): ')
+    while not r in ['T', 'F', 'True', 'False']:
+        r = input('illegal answer, try again: \n rotate image? (True / False): ')
+    if 'T' in r:
+        to_rotate = True
+        rotation_angle = input('enter rotate angle: ')
+        while not rotation_angle in ['90', '180', '270', '360']:
+            rotation_angle = input('illegal angle, try again \nenter rotate angle: ')
+        rotation_angle = int(rotation_angle)
+    c = input('convert image? (True / False): ')
+    while c not in ['T', 'F', 'True', 'False']:
+        c = input('illegal answer, try again: \n convert image? (True / False): ')
+    if 'T' in c:
+        to_convert = True
+        conversion = input('enter conversion: ')
+        while not conversion.isdigit():
+            conversion = input('illegal conversion, try again \nenter conversion ')
+        conversion = int(conversion)
+    if to_serialize:
+        if to_convert:
+            txt = conversion_table(txt, table, conversion)
+        if to_rotate:
+            txt = rotation(txt, rotation_angle)
+        ser_txt = serialize_text(txt)
+        f = open(file_path+'.saa', 'w') #saa = serialized ASCII art
+        f.write(ser_txt)
+        f.close()
+        print('the file saved as '+ file_path+'.saa')
+    if not to_serialize:
+        txt = deserialize(txt)
+        if to_convert:
+            txt = conversion_table(txt, table, conversion)
+        if to_rotate:
+            txt = rotation(txt, rotation_angle)
+        des_txt = serialize_text(txt)
+        new_path = file_path + '.ASCIIart'
+        if file_path[-4:]=='.saa':
+            new_path = file_path[:-4]
+
+        f = open(new_path, 'w')  # saa = serialized ASCII art
+        f.write(des_txt)
+        f.close()
+        print('the file saved as ' + new_path + '.saa')
+
+
 if __name__ == '__main__':
     f = open("serialized1.txt", 'r')
     t = f.read()
     print()
     print(deserialize(t))
-    #print(rotation(t, 360))
-    #print(rotation(rotation(t, 360), 360))
+    # print(rotation(t, 360))
+    # print(rotation(rotation(t, 360), 360))

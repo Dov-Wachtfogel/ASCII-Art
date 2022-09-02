@@ -30,15 +30,13 @@ def serialize_text(text: str):
 
 
 def conversion_table(text: str, table: dict, num: int):
-    if num == 0:
-        return text
     conv_txt = ''
     lines = text.splitlines()
     for line in lines:
         conv_line = ''
         for l in line:
             try:
-                conv_line += table[l][num - 1]
+                conv_line += table[l][num]
             except:
                 conv_line += 'X'
         conv_txt += conv_line + '\n'
@@ -90,7 +88,7 @@ def csv_to_convert_table(csv_path: str):
     csv_reader = csv.reader(csv_file, delimiter=',')
     dict_table = {}
     for row in csv_reader:
-        dict_table[row[0]] = list(row[1:])
+        dict_table[row[0]] = list(row)
     return dict_table
 
 
@@ -99,12 +97,14 @@ def main():
     to_rotate = False
     to_convert = False
     table = csv_to_convert_table('convertion_table.csv')
-    a = input('serialize / deserialize (s / d): ')
+    a = str(input('serialize / deserialize (s / d): '))
     if not a in ['serialize', 'deserialize', 's', 'd']:
         print('unknown action, try again')
         main()
         return None
-    file_path = input("please enter file's path: ")
+    if a in ['serialize', 's']:
+        to_serialize = True
+    file_path = str(input("please enter file's path: "))
     try:
         f = open(file_path, 'r')
         txt = f.read()
@@ -113,12 +113,12 @@ def main():
         print('file not found, try again')
         main()
         return None
-    r = input('rotate image? (True / False): ')
+    r = str(input('rotate image? (True / False): '))
     while not r in ['T', 'F', 'True', 'False']:
-        r = input('illegal answer, try again: \n rotate image? (True / False): ')
+        r = str(input('illegal answer, try again: \n rotate image? (True / False): '))
     if 'T' in r:
         to_rotate = True
-        rotation_angle = input('enter rotate angle: ')
+        rotation_angle = str(input('enter rotate angle: '))
         while not rotation_angle in ['90', '180', '270', '360']:
             rotation_angle = input('illegal angle, try again \nenter rotate angle: ')
         rotation_angle = int(rotation_angle)
